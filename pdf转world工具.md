@@ -9,6 +9,12 @@
 * Textln接口
   * https://www.textin.com/market/chager/image-to-pdf
   * 每次0.085元一次
+* **度慧文档转PDF**
+  * https://market.cloud.tencent.com/products/18764#spec=0.00%E5%85%83%2F100%E6%AC%A1
+  * 0.015每次 
+* **九云图文档转PDF API**
+  * https://market.cloud.tencent.com/products/35566
+  * 0.01元每次
 
 * 印了么
 
@@ -16,7 +22,7 @@
 
   * 0.35元一次
 
-    ##### 经调研腾讯云接口性价比最高故使用
+    ##### *经调研**九云图文档转PDF API**接口性价比最高故使用*
 
 #### 服务器选择
 
@@ -30,5 +36,10 @@
 
   ##### 经调研腾讯云服务器性价比最高故使用
 
+#### ui设计
 
+* 由于前期资金缺乏，暂时不提供ui设计
 
+#### 原型设计
+
+* 由于前期资金缺乏，暂时不提供原型
