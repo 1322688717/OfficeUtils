@@ -1,5 +1,29 @@
 # pdf转world工具
 
+## 前言
+
+### 开发背景
+
+* 由于找不到工作所以准备自己创业
+
+### 市场前景
+
+* 关于pdf转world，excel ，ppt ，HTML市场一直都有这个需求，且需求量巨大，所以开始着手此项目
+
+### 达到效果
+
+* ui界面 简易实用合理
+* 功能完善且稳定
+* app不存在任何崩溃或者bug
+
+### 市场需求
+
+* 定位到学生 老师  职场工作人员等
+
+
+
+## 环境搭建及服务器部署
+
 #### 接口选择
 
 * 腾讯接口
@@ -43,3 +67,43 @@
 #### 原型设计
 
 * 由于前期资金缺乏，暂时不提供原型
+
+#### 开发环境
+
+* jdk   
+  * java11
+* sdk
+  * Android SDK
+* 开发工具
+  * Android studio
+
+## 产品信息
+
+* 包名：com.example.officeutils
+* APPID：com.example.officeutils
+
+## 产品设计思路
+
+* 完全由Google推荐使用的kotlin语言编程
+* 由Google推出的jecpack组件来实现
+  * https://blog.csdn.net/qq_35101450/article/details/123437481?ops_request_misc=&request_id=&biz_id=102&utm_term=jectpack%E7%94%A8%E6%B3%95&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-1-123437481.142^v59^pc_rank_34_queryrelevant25,201^v3^control_1&spm=1018.2226.3001.4187
+* viewbind的使用
+* https://blog.csdn.net/zhangying1994/article/details/118862524?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166619487016800182718664%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=166619487016800182718664&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-118862524-null-null.142^v59^pc_rank_34_queryrelevant25,201^v3^control_1&utm_term=android%20viewbinding&spm=1018.2226.3001.4187
+  * buildFeatures {
+        viewBinding true
+    }
+* databinding的使用
+  * https://blog.csdn.net/Mr_Tony/article/details/124199278?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166619498216781432964270%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=166619498216781432964270&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-1-124199278-null-null.142^v59^pc_rank_34_queryrelevant25,201^v3^control_1&utm_term=databinding%E4%BD%BF%E7%94%A8&spm=1018.2226.3001.4187
+  *  android {
+            ...
+         buildFeatures {
+                dataBinding = true
+                //viewBinding = true
+            }
+     }
+  * life
+* 设计模式
+  * 单例模式
+* 项目结构
+  * 采用MVVM
+* 项目配置
