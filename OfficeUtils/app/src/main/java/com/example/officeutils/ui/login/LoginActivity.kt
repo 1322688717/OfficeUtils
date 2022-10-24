@@ -62,7 +62,7 @@ class LoginActivity : BaseActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            RouterUtil().goMainActivity(this)
+            RouterUtil().goBottomNavigationActivity(this)
             finish()
         }
 

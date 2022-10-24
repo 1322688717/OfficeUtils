@@ -12,7 +12,7 @@
         android:layout_height="@dimen/dp_30"/>
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/img_back"
         android:layout_width="@dimen/dp_35"
         android:layout_height="@dimen/dp_30"
         android:layout_marginStart="@dimen/dp_20"
@@ -110,8 +110,8 @@
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/edt_ver_code"
-            app:layout_constraintEnd_toEndOf="@+id/edt_ver_code"
+            app:layout_constraintBottom_toBottomOf="@+id/edt_code"
+            app:layout_constraintEnd_toEndOf="@+id/edt_code"
             app:srcCompat="@mipmap/delet" />
 
         <Button
@@ -124,12 +124,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
 
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/color_50000000"
-            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

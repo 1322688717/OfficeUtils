@@ -56,8 +56,12 @@ class RegisterActivity : BaseActivity() {
             }else{
                 ToastUtil().ToastShort(this,"请输入手机号或密码")
             }
-
         }
+
+        binding.imgBack.setOnClickListener {
+            finish()
+        }
+
     }
 
     class TimerUnit(private val textView: TextView) : Handler() {

@@ -6,6 +6,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+
+/**
+ * 简易接口
+ * 调用地址：https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/convert
+ * 请求方式：GET
+ * 返回类型：JSON
+ */
+
+/**
+ * 高级接口
+ * 调用地址：https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/v2/jobs
+ * 请求方式：POST
+ * 返回类型：JSON
+ */
+
 class RetrofitUtlis {
     private var Base_URL = ""
 

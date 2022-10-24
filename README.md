@@ -60,6 +60,17 @@
 
   ##### 经调研腾讯云服务器性价比最高故使用
 
+#### 短信接口
+
+* 阿里云
+  * https://www.aliyun.com/product/sms?spm=5176.21213303.J_6704733920.7.1a1653c9hppp0n&scm=20140722.S_product%40%40%E4%BA%91%E4%BA%A7%E5%93%81%40%4080687._.ID_product%40%40%E4%BA%91%E4%BA%A7%E5%93%81%40%4080687-RL_%E7%9F%AD%E4%BF%A1-LOC_main-OR_ser-V_2-P0_0
+  * 大约0.03每条
+* **三网短信通知**
+  * https://market.cloud.tencent.com/products/32818
+  * 约0.038一次
+
+经调研阿里云短线接口性价比较高故使用
+
 #### ui设计
 
 * 由于前期资金缺乏，暂时不提供ui设计

@@ -6,9 +6,13 @@
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/drawable/bg_gry.xml" value="0.1335" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/drawable/bg_splash_bitmap.xml" value="0.176" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/activity_base.xml" value="0.23007246376811594" />
+        <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/activity_bottom_navigation.xml" value="0.27395833333333336" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/activity_register.xml" value="0.264" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/activity_splash.xml" value="0.23007246376811594" />
+        <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/fragment_home.xml" value="0.2572463768115942" />
+        <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/layout/fragment_notifications.xml" value="0.27395833333333336" />
+        <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/menu/bottom_nav_menu.xml" value="0.27395833333333336" />
         <entry key="..\:/OfficeUtils/OfficeUtils/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.199" />
       </map>
     </option>
