@@ -3,7 +3,9 @@ package com.example.officeutils.https
 
 
 object RequestResponse {
-    val vvhService = RetrofitUtlis().create(APIService::class.java, 1)
+
+    //九云图api
+    val JYTService = RetrofitUtlis().create(APIService::class.java, 1)
 
     val UomgService = RetrofitUtlis().create(APIService::class.java, 2)
 

@@ -1,12 +1,16 @@
 package com.example.officeutils.https
 
 
+import com.example.officeutils.bean.BeanDPFWord
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
 
 interface APIService {
+    @GET("/release/convert")
+    fun getPDFToWord(@Query("type") type : String) : Call<BeanDPFWord>
+
 //    @GET("/api/sao")
 //    fun getSao(@Query("type") type : String) : Call<SaoBean>
 //

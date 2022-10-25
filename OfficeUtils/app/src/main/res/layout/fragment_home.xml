@@ -27,6 +27,22 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_100"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_10"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_pdfToWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/dp_18"
+        android:text="pdf转word"
+        />
 
 
 </LinearLayout>

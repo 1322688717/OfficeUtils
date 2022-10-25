@@ -52,7 +52,7 @@ class RetrofitUtlis {
 
     fun getUrl(type : Int) : String{
         when (type){
-            1 -> Base_URL = "https://api.vvhan.com"  //韩小韩API接口站
+            1 -> Base_URL = "https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com"  //韩小韩API接口站
             2 -> Base_URL = "https://api.uomg.com"  //UomgAPI 接口网站
             3 -> Base_URL = "https://api.seniverse.com/"  //心知天气
             4 -> Base_URL = "http://47.98.113.125:8082/"  //胡总服务器
