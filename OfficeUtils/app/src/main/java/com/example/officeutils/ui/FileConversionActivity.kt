@@ -13,6 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.officeutils.bean.PDFFileInfo
 import com.example.officeutils.databinding.ActivityFileConversionBinding
+import com.example.officeutils.https.OkHttpUtils
+import com.example.officeutils.https.TheHttpPrams
 import com.example.officeutils.utils.Base64Encoder
 import com.example.officeutils.utils.FileToBase64
 import com.example.officeutils.utils.PDFUtil
@@ -23,7 +25,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import java.io.DataOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.UnsupportedEncodingException
@@ -42,12 +43,18 @@ import kotlin.concurrent.thread
 class FileConversionActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityFileConversionBinding
-    private val pdfData = ArrayList<PDFFileInfo>()
 
     var file : String = ""
      var base64 : String = ""
     lateinit var uri : Uri
+    private val secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G"
+    //云市场分配的密钥Key
+    private val secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai"
+    val source = "market"
+    val url = "https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/v2/jobs"
+
     lateinit var textView : TextView
+
     //对文件管理器返回值做处理
     var mGetContent = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { uri1 ->
         // Handle the returned Uri
@@ -57,7 +64,6 @@ class FileConversionActivity : AppCompatActivity() {
              file = getFile(this@FileConversionActivity,uri)
              base64 = getBase64(file)
             val sn = "长度："+base64.length.toString()+"\n"+ "显示base64前2000位" +"\n"+uri+"\n"+file
-
             //主线程操作
             withContext(Dispatchers.Main){
                 Log.e("TAG","$sn")
@@ -72,21 +78,24 @@ class FileConversionActivity : AppCompatActivity() {
         binding = ActivityFileConversionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnUpload.setOnClickListener {
-
-            thread {
-                initData()
-                //getPost()
-                //test(file)
-            }
-
-        }
-
-
+        /**
+         * 获取文件
+         */
         binding.btnTest.setOnClickListener {
             mGetContent.launch("application/pdf")
-
         }
+
+        /**
+         * 发送请求
+         */
+        binding.btnUpload.setOnClickListener {
+            GlobalScope.launch {
+                Post(base64)
+                PostTest()
+            }
+        }
+
+
 
     }
 
@@ -95,85 +104,54 @@ class FileConversionActivity : AppCompatActivity() {
         Test.getInstance().main(file);
     }
 
-    private fun getPost() {
-        var request: Request? = null
-        var okHttpClient: OkHttpClient? = null
-        val TAG = "zcq"
-        //云市场分配的密钥Id
-        val secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G"
-        //云市场分配的密钥Key
-        val secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai"
-        val source = "market"
-        val method = "POST"
+    /**
+     *文件转换  post请求
+     */
+    @RequiresApi(Build.VERSION_CODES.N)
+    suspend fun Post(base:String){
+        withContext(Dispatchers.IO) {
+            OkHttpUtils.builder().url(url)
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addHeader("X-Source", source)
+                .addHeader("X-Date", TheHttpPrams.GetGMT())
+                .addHeader("Authorization", TheHttpPrams.calcAuthorization(source, secretId, secretKey, TheHttpPrams.GetGMT()))
+                .addParam("",base)
+                .post(false)
+                .async(object : OkHttpUtils.ICallBack {
+                    override fun onSuccessful(call: Call?, data: String?) {
+                        Log.i(TAG, "onSuccessful: $data")
+                    }
 
-
-        // 查询参数
-
-        val queryParams: MutableMap<String, String> = HashMap()
-        var theBase64 = "data:application/pdf;base64,$base64"
-        queryParams["document_url"] = "theBase64"
-        // url参数拼接
-        var url = "https://service-jnj94q93-1255058406.sh.apigw.tencentcs.com/release/convert"
-        if (!queryParams.isEmpty()) {
-            url += "?" + urlencode(queryParams)
+                    override fun onFailure(call: Call?, errorMsg: String?) {
+                        Log.i(TAG, "onFailure: $errorMsg")
+                    }
+                })
         }
-
-
-        val cd = Calendar.getInstance()
-        val sdf = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US)
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"))
-        val datetime: String = sdf.format(cd.getTime())
-
-        val auth: String = calcAuthorization(source, secretId, secretKey, datetime)!!
-
-        val headers: MutableMap<String, String> = HashMap()
-        headers["X-Source"] = source
-        headers["X-Date"] = datetime
-        headers["Authorization"] = auth
-        // request body
-        // request body
-        val methods: MutableMap<String, Boolean> = HashMap()
-        methods["POST"] = true
-        methods["PUT"] = true
-        methods["PATCH"] = true
-        val hasBody = methods[method]
-//        if (hasBody != null) {
-//            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-//            conn.setDoOutput(true)
-//            val out = DataOutputStream(conn.getOutputStream())
-//            out.writeBytes(urlencode(bodyParams))
-//            out.flush()
-//            out.close()
-//        }
-
-        request = Request.Builder()
-            .addHeader("Source",source)
-            .addHeader("X-Date",datetime)
-            .addHeader("Authorization",auth)
-            .url(url)
-            .build()
-
-        okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .connectTimeout(10, TimeUnit.MINUTES)
-            .writeTimeout(10, TimeUnit.MINUTES)
-            .readTimeout(10, TimeUnit.MINUTES)
-            .retryOnConnectionFailure(true).build()
-
-
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("TAG","请求失败——》$e")
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                Log.i("TAG","请求-——》${response}")
-                Log.i("TAG","${response.body}")
-            }
-        })
     }
 
+    /**
+     * 测试 HTTP post请求
+     */
+    @RequiresApi(Build.VERSION_CODES.N)
+    suspend fun PostTest(){
+        withContext(Dispatchers.IO){
+            OkHttpUtils.builder().url("http://jsonplaceholder.typicode.com/posts")
+                .addHeader("Content-Type","application/x-www-form-urlencoded")
+                .addParam("userId","123")
+                .addParam("title","ahdfluh")
+                .addParam("body","jdkhfa")
+                .post(false)
+                .async(object : OkHttpUtils.ICallBack{
+                    override fun onFailure(call: Call?, errorMsg: String?) {
+                        Log.i(TAG, "========="+"onFailure: $errorMsg")
+                    }
+
+                    override fun onSuccessful(call: Call?, data: String?) {
+                        Log.i(TAG, "=================="+"onSuccessful: $data")
+                    }
+                })
+        }
+    }
 
     suspend fun  getFile(context: Context, uri : Uri):String{
         var FILE : String
@@ -194,118 +172,9 @@ class FileConversionActivity : AppCompatActivity() {
     }
 
 
-
-
-
-    /**
-     * 获取手机文档数据
-     *
-     * @param
-     */
-    fun getDocumentData() {
-        val columns = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            MediaStore.Files.FileColumns.MIME_TYPE,
-            MediaStore.Files.FileColumns.SIZE,
-            MediaStore.Files.FileColumns.DATE_MODIFIED,
-            MediaStore.Files.FileColumns.DATA
-        )
-        val select = "(_data LIKE '%.pdf')"
-        val contentResolver = contentResolver
-        val cursor = contentResolver.query(
-            MediaStore.Files.getContentUri("external"),
-            columns,
-            select,
-            null,
-            null
-        )
-        var columnIndexOrThrow_DATA = 0
-        if (cursor != null) {
-            columnIndexOrThrow_DATA =
-                cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-        }
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                val path = cursor.getString(columnIndexOrThrow_DATA)
-                val document: PDFFileInfo = PDFUtil.getFileInfoFromFile(File(path))
-                pdfData.add(document)
-                Log.d(TAG, " pdf $document")
-            }
-        }
-        cursor!!.close()
-    }
-
-
-
-    private fun initData() {
-        var request: Request? = null
-        var okHttpClient: OkHttpClient? = null
-        val TAG = "zcq"
-        //云市场分配的密钥Id
-        val secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G"
-        //云市场分配的密钥Key
-        val secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai"
-        val source = "market"
-
-
-        // 查询参数
-
-        val queryParams: MutableMap<String, String> = HashMap()
-        var theBase64 = "data:application/pdf;base64,$base64"
-        queryParams["document_url"] = theBase64
-        // url参数拼接
-        var url = "https://service-jnj94q93-1255058406.sh.apigw.tencentcs.com/release/convert"
-        if (!queryParams.isEmpty()) {
-            url += "?" + urlencode(queryParams)
-        }
-
-
-        val cd = Calendar.getInstance()
-        val sdf = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US)
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"))
-        val datetime: String = sdf.format(cd.getTime())
-
-        val auth: String = calcAuthorization(source, secretId, secretKey, datetime)!!
-
-        val headers: MutableMap<String, String> = HashMap()
-        headers["X-Source"] = source
-        headers["X-Date"] = datetime
-        headers["Authorization"] = auth
-
-
-            request = Request.Builder()
-                .addHeader("Source",source)
-                .addHeader("X-Date",datetime)
-                .addHeader("Authorization",auth)
-                .url(url)
-                .build()
-
-        okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .connectTimeout(10, TimeUnit.MINUTES)
-            .writeTimeout(10, TimeUnit.MINUTES)
-            .readTimeout(10, TimeUnit.MINUTES)
-            .retryOnConnectionFailure(true).build()
-
-
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("TAG","请求失败——》$e")
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                Log.i("TAG","请求-——》${response}")
-                Log.i("TAG","${response.body}")
-            }
-        })
-    }
-
     @Throws(UnsupportedEncodingException::class)
     fun urlencode(map: Map<*, *>): String? {
         val sb = StringBuilder()
-
-
         for ((key, value)in map) run {
             if (sb.length > 0) {
                 sb.append("&")

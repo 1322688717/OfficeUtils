@@ -85,5 +85,7 @@ dependencies {
     api('com.squareup.retrofit2:converter-gson:2.9.0')
 
     implementation 'io.github.youth5201314:banner:2.2.2'
+    //阿里json
+    implementation 'com.alibaba:fastjson:2.0.16.android'
 
 }
