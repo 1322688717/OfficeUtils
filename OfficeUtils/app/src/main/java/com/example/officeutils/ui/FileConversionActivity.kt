@@ -42,7 +42,7 @@ class FileConversionActivity : AppCompatActivity() {
              val base = getBase64(file)
             mutableMap.put("document_url","data:application/pdf;base64,$base")
             base64 = urlencode(mutableMap)
-            val sn = "长度："+base64.length.toString()+"\n" +"\n"+uri+"\n"+file
+            val sn = "长度："+base64.length+"\n" +uri+"\n"+file
             Log.e("TAG","$sn")
         }
     }
@@ -103,8 +103,9 @@ class FileConversionActivity : AppCompatActivity() {
 
 
     @Throws(UnsupportedEncodingException::class)
-    fun urlencode(map: Map<*, *>): String {
+    suspend fun urlencode(map: Map<*, *>): String {
         val sb = StringBuilder()
+        withContext(Dispatchers.IO){
         for ((key, value)in map) run {
             if (sb.length > 0) {
                 sb.append("&")
@@ -116,6 +117,7 @@ class FileConversionActivity : AppCompatActivity() {
                     URLEncoder.encode(value.toString(), "UTF-8")
                 )
             )
+         }
         }
         return sb.toString()
     }

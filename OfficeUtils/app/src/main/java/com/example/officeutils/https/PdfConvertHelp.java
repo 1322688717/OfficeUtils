@@ -26,7 +26,8 @@ public class PdfConvertHelp {
     //云市场分配的密钥Key
     public static final String secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai";
     public static final String source = "market";
-    public static final String url = "https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/v2/jobs";
+    public static final String url = "https://service-jnj94q93-1255058406.sh.apigw.tencentcs.com/release/v2/jobs";
+    public static final String he = "data:application/pdf;base64,";
 
     public static String calcAuthorization(String source, String secretId, String secretKey, String datetime)
             throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
