@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.officeutils.bean.JsonToFrom
 import com.example.officeutils.databinding.ActivityFileConversionBinding
 import com.example.officeutils.utils.FileToBase64
 import com.example.officeutils.utils.UriToFile
@@ -26,22 +27,29 @@ class FileConversionActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityFileConversionBinding
     lateinit var viewModel: HttpViewModle
-    val mutableMap = mutableMapOf<String,String>()
 
     var file : String = ""
      var base64 : String = ""
     lateinit var uri : Uri
 
     //对文件管理器返回值做处理
+    @RequiresApi(Build.VERSION_CODES.N)
     var mGetContent = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { uri1 ->
         // Handle the returned Uri
         uri = uri1
         Log.i(TAG, "onActivityResult:$uri")
         GlobalScope.launch {
-             file = getFile(this@FileConversionActivity,uri)
-             val base = getBase64(file)
-            mutableMap.put("document_url","data:application/pdf;base64,$base")
-            base64 = urlencode(mutableMap)
+            file = getFile(this@FileConversionActivity,uri)
+            base64 = getBase64(file)
+
+            val LIstSrtings : List<String> = listOf("ImportFile")
+            val ConvertFileDTO = JsonToFrom.TasksDTO.ConvertFileDTO(LIstSrtings,"pdf","convert")
+            val ImportFileDTO = JsonToFrom.TasksDTO.ImportFileDTO("import/url","data:application/pdf;base64,$base64")
+            val listString : List<String> = listOf("ConvertFile")
+            val ExportResultDTO = JsonToFrom.TasksDTO.ExportResultDTO(listString,"export/url")
+            val TasksDTO = JsonToFrom.TasksDTO(ConvertFileDTO,ImportFileDTO,ExportResultDTO)
+            val JsonToFrom = JsonToFrom("","",TasksDTO)
+            viewModel.postPdfConvert(JsonToFrom)
             val sn = "长度："+base64.length+"\n" +uri+"\n"+file
             Log.e("TAG","$sn")
         }
@@ -54,7 +62,7 @@ class FileConversionActivity : AppCompatActivity() {
         binding = ActivityFileConversionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(HttpViewModle::class.java)
-        viewModel.pdfConvert.observe(this){pdfConvert ->
+        viewModel.theResult.observe(this){pdfConvert ->
             binding.btnResult.text = pdfConvert.toString()
         }
 
@@ -62,7 +70,7 @@ class FileConversionActivity : AppCompatActivity() {
          * 获取文件
          */
         binding.btnTest.setOnClickListener {
-            mGetContent.launch("application/pdf")
+            mGetContent.launch("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         }
 
         /**
@@ -70,18 +78,13 @@ class FileConversionActivity : AppCompatActivity() {
          */
         binding.btnUpload.setOnClickListener {
             GlobalScope.launch {
-                //测试的post请求
-                viewModel.postTest()
-                viewModel.postPdfConvert(base64)
+                viewModel.theDemoPOst(file)
             }
         }
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun test(file: String) {
-        Test.getInstance().main(file);
-    }
+
 
     suspend fun  getFile(context: Context, uri : Uri):String{
         var FILE : String
