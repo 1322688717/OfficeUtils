@@ -50,13 +50,12 @@ class HttpViewModle : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.N)
     suspend fun postPdfConvert(base:String){
         withContext(Dispatchers.IO) {
-            OkHttpUtils.builder().url(PdfConvertHelp.url)
-                .addHeader("Content-Type","application/x-www-form-urlencoded")
+            OkHttpUtils.builder().url(PdfConvertHelp.url+"?"+base)
                 .addHeader("X-Source", PdfConvertHelp.source)
                 .addHeader("X-Date", PdfConvertHelp.GetGMT())
                 .addHeader("Authorization", PdfConvertHelp.calcAuthorization(
                     PdfConvertHelp.source, PdfConvertHelp.secretId, PdfConvertHelp.secretKey, PdfConvertHelp.GetGMT()))
-                .addParam("",base)
+
                 .post(false)
                 .async(object : OkHttpUtils.ICallBack {
                     override fun onSuccessful(call: Call?, data: String?) {

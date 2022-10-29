@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.officeutils.databinding.ActivityFileConversionBinding
-import com.example.officeutils.utils.Base64Encoder
 import com.example.officeutils.utils.FileToBase64
 import com.example.officeutils.utils.UriToFile
 import com.example.officeutils.viewmodel.HttpViewModle
@@ -21,17 +20,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.security.InvalidKeyException
-import java.security.Key
-import java.security.NoSuchAlgorithmException
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
 
 
 class FileConversionActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityFileConversionBinding
     lateinit var viewModel: HttpViewModle
+    val mutableMap = mutableMapOf<String,String>()
 
     var file : String = ""
      var base64 : String = ""
@@ -44,8 +39,10 @@ class FileConversionActivity : AppCompatActivity() {
         Log.i(TAG, "onActivityResult:$uri")
         GlobalScope.launch {
              file = getFile(this@FileConversionActivity,uri)
-             base64 = getBase64(file)
-            val sn = "长度："+base64.length.toString()+"\n"+ "显示base64前2000位" +"\n"+uri+"\n"+file
+             val base = getBase64(file)
+            mutableMap.put("document_url","data:application/pdf;base64,$base")
+            base64 = urlencode(mutableMap)
+            val sn = "长度："+base64.length.toString()+"\n" +"\n"+uri+"\n"+file
             Log.e("TAG","$sn")
         }
     }
@@ -106,7 +103,7 @@ class FileConversionActivity : AppCompatActivity() {
 
 
     @Throws(UnsupportedEncodingException::class)
-    fun urlencode(map: Map<*, *>): String? {
+    fun urlencode(map: Map<*, *>): String {
         val sb = StringBuilder()
         for ((key, value)in map) run {
             if (sb.length > 0) {
@@ -122,29 +119,4 @@ class FileConversionActivity : AppCompatActivity() {
         }
         return sb.toString()
     }
-
-
-    @Throws(
-        NoSuchAlgorithmException::class,
-        UnsupportedEncodingException::class,
-        InvalidKeyException::class
-    )
-    fun calcAuthorization(
-        source: String,
-        secretId: String,
-        secretKey: String,
-        datetime: String
-    ): String? {
-        val signStr = "x-date: $datetime\nx-source: $source"
-        val mac: Mac = Mac.getInstance("HmacSHA1")
-        val sKey: Key = SecretKeySpec(secretKey.toByteArray(charset("UTF-8")), mac.getAlgorithm())
-        mac.init(sKey)
-        val hash: ByteArray = mac.doFinal(signStr.toByteArray(charset("UTF-8")))
-
-        val sig: String = Base64Encoder.encode(hash)
-
-        return "hmac id=\"$secretId\", algorithm=\"hmac-sha1\", headers=\"x-date x-source\", signature=\"$sig\""
-    }
-
-
 }
