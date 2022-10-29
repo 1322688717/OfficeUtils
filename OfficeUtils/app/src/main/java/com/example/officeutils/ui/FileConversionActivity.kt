@@ -104,24 +104,4 @@ class FileConversionActivity : AppCompatActivity() {
         return BASE_64
     }
 
-
-    @Throws(UnsupportedEncodingException::class)
-    suspend fun urlencode(map: Map<*, *>): String {
-        val sb = StringBuilder()
-        withContext(Dispatchers.IO){
-        for ((key, value)in map) run {
-            if (sb.length > 0) {
-                sb.append("&")
-            }
-            sb.append(
-                java.lang.String.format(
-                    "%s=%s",
-                    URLEncoder.encode(key.toString(), "UTF-8"),
-                    URLEncoder.encode(value.toString(), "UTF-8")
-                )
-            )
-         }
-        }
-        return sb.toString()
-    }
 }
