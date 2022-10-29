@@ -18,9 +18,15 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * @author FC
  */
-public class TheHttpPrams {
+public class PdfConvertHelp {
 
-    private static final String TAG = "TheHttpPrams";
+    private static final String TAG = "PdfConvertHelp";
+
+    public static final String secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G";
+    //云市场分配的密钥Key
+    public static final String secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai";
+    public static final String source = "market";
+    public static final String url = "https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/v2/jobs";
 
     public static String calcAuthorization(String source, String secretId, String secretKey, String datetime)
             throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
