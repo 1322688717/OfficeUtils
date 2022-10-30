@@ -229,7 +229,7 @@ public class OkHttpUtils {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 assert response.body() != null;
-                callBack.onSuccessful(call, response.body().string());
+                callBack.onSuccessful(call, response);
             }
         });
     }
@@ -293,7 +293,7 @@ public class OkHttpUtils {
      */
     public interface ICallBack {
 
-        void onSuccessful(Call call, String data);
+        void onSuccessful(Call call, Response data);
 
         void onFailure(Call call, String errorMsg);
 

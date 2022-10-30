@@ -4,6 +4,9 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.List;
 
+/**
+ * 提交的表单
+ */
 public class JsonToFrom {
     public String webHook;
     public String tag;

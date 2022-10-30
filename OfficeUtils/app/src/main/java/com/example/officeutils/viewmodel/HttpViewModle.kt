@@ -1,5 +1,6 @@
 package com.example.officeutils.viewmodel
 
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -7,13 +8,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
+import com.example.officeutils.bean.FileNameAndBase64
 import com.example.officeutils.bean.JsonToFrom
+import com.example.officeutils.bean.ResultBean
 import com.example.officeutils.https.OkHttpUtils
 import com.example.officeutils.https.PdfConvertHelp
 import com.example.officeutils.ui.Java_Windows
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Call
+import okhttp3.Response
 
 class HttpViewModle : ViewModel() {
     val TAG = "HttpViewModle"
@@ -21,6 +25,11 @@ class HttpViewModle : ViewModel() {
     val theResult = MutableLiveData<String>()
     //pdf转换的数据
     val pdfConvert = MutableLiveData<String?>()
+    //demo的 PDF转换数据
+    val demoPdfConvert = MutableLiveData<ResultBean>()
+    // base64+name
+    val base64andname = MutableLiveData<FileNameAndBase64>()
+
 
     /**
      * 测试 HTTP post请求
@@ -41,9 +50,9 @@ class HttpViewModle : ViewModel() {
                     }
 
                     @RequiresApi(Build.VERSION_CODES.O)
-                    override fun onSuccessful(call: Call?, data: String) {
+                    override fun onSuccessful(call: Call?, data: Response) {
                         Log.i(TAG, "=================="+"onSuccessful: $data")
-                        theResult.postValue(data)
+                        theResult.postValue(data.message.toString())
                     }
                 })
         }
@@ -73,9 +82,10 @@ class HttpViewModle : ViewModel() {
                 .addParam("body",theRequestJson)
                 .post(true)
                 .async(object : OkHttpUtils.ICallBack {
-                    override fun onSuccessful(call: Call?, data: String?) {
+                    override fun onSuccessful(call: Call?, data: Response?) {
                         Log.i(TAG, "onSuccessful: $data")
-                        pdfConvert.postValue(data)
+                            pdfConvert.postValue(data!!.body.toString())
+
                     }
 
                     override fun onFailure(call: Call?, errorMsg: String?) {
@@ -87,11 +97,9 @@ class HttpViewModle : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun theDemoPOst(file:String){
+    suspend fun theDemoPOst(file:String,context: Context){
         withContext(Dispatchers.IO){
-            val result = Java_Windows.mains(file).toString()
-            Log.i(TAG, "theDemoPOst: $result")
-            pdfConvert.postValue(result)
+            base64andname.postValue(Java_Windows.mains(file,context))
         }
     }
 

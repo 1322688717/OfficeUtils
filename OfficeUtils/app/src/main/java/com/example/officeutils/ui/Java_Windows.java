@@ -1,8 +1,19 @@
 package com.example.officeutils.ui;
 
+import android.content.Context;
 import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+
+import com.alibaba.fastjson.JSON;
+import com.example.officeutils.bean.FileNameAndBase64;
+import com.example.officeutils.bean.ResultBean;
+import com.example.officeutils.utils.FileToBase64;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -18,6 +29,8 @@ import java.util.*;
 
 
 public class Java_Windows {
+
+    private static final String TAG = "Java_Windows";
 
     public static String calcAuthorization(String source, String secretId, String secretKey, String datetime)
             throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
@@ -46,7 +59,7 @@ public class Java_Windows {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String mains(String file) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public static FileNameAndBase64 mains(String file, Context context) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
         //云市场分配的密钥Id
         String secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G";
         //云市场分配的密钥Key
@@ -54,6 +67,7 @@ public class Java_Windows {
 
         String source = "market";
         String result = "";
+        FileNameAndBase64 fileNameAndBase64 = null;
 
         Calendar cd = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
@@ -81,7 +95,7 @@ public class Java_Windows {
         fis.close();
         byte[] encode = Base64.getEncoder().encode(bos.toByteArray());
         String str = new String(encode);
-        String he = "data:application/docx;base64,";
+        String he = "application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,";// docx
         // 查询参数
         Map<String, String> queryParams = new HashMap<String, String>();
         // body参数
@@ -129,13 +143,31 @@ public class Java_Windows {
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
 
+
+
+
             while ((line = in.readLine()) != null) {
                 result += line;
             }
+            System.out.println(result);
+            JSONObject jsonObject = new JSONObject(result);
+            JSONObject now = jsonObject.optJSONObject("data");
+            assert now != null;
 
+
+            JSONArray tasks = now.optJSONArray("tasks");
+            JSONObject the = (JSONObject) tasks.get(0);
+            JSONArray thethe = the.optJSONArray("urlArray");
+
+            Log.e("base64,====",thethe.toString());
+            File files = new File(Environment.getExternalStorageDirectory(), "filename.pdf");
+            String sb = thethe.toString().substring(81,thethe.toString().length());
+             fileNameAndBase64 = new FileNameAndBase64(sb,files.toString());
+            Log.i(TAG, "mains: 原生请求成功"+fileNameAndBase64);
 
         } catch (Exception e) {
             System.out.println(e);
+            Log.e(TAG, "mains: 原生请求失败"+e );
             e.printStackTrace();
         } finally {
             try {
@@ -146,7 +178,7 @@ public class Java_Windows {
                 e2.printStackTrace();
             }
         }
-        return result;
+        return fileNameAndBase64;
     }
 
 
