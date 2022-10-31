@@ -86,7 +86,7 @@ class RegisterActivity : BaseActivity() {
                 rr.password = password
                 rr.username = phoneNumber
                 Log.e("TAG","rr==$rr")
-                viewModel.register(rr,RegisterActivity.this)
+                viewModel.register(rr,this)
             }
         }
     }

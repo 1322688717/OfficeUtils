@@ -7,6 +7,9 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.officeutils.bean.BeanLogin
+import com.example.officeutils.https.RequestResponse
+import com.example.officeutils.utils.RouterUtil
 import com.google.gson.Gson
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -26,37 +29,40 @@ class LoginViewModel : ViewModel() {
 //
 //
 //
-//    /**
-//     * 登录
-//     */
-//    fun login(account : String , password : String,activity: Activity,code: String,uuid: String){
-//        beanGologin.code = code
-//        beanGologin.uuid = uuid
-//        beanGologin.username = account
-//        beanGologin.password = password
-//
-//        RequestResponse.huaoService.getLogin(beanGologin).enqueue(object : Callback<BeanLogin?>{
-//            override fun onResponse(call: Call<BeanLogin?>, response: Response<BeanLogin?>) {
-//                when (response.body()!!.code) {
-//                    200 -> {
-//                        RouterUtil().goMainActivity(activity)
-//                        val sp = activity.getSharedPreferences("sp", Context.MODE_PRIVATE)
-//                        sp.edit().putString("token", response.body()!!.token.toString()).apply()
-//                        Toast.makeText(activity,"登录成功",Toast.LENGTH_SHORT).show()
-//                        Log.e("TAG","存token${response.body()!!.token}")
-//                                activity.finish()
-//                    }
-//                    500 -> {
-//                        Toast.makeText(activity, response.body()!!.msg,Toast.LENGTH_SHORT).show()
-//                    }
-//                    405 ->{
-//                        Toast.makeText(activity,response.body()!!.msg,Toast.LENGTH_SHORT).show()
-//                    }
-//                    else -> {
-//                        Toast.makeText(activity,response.body()!!.msg,Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
+    /**
+     * 登录
+     */
+    fun login(account : String , password : String,code: String,mActivity: Activity){
+        RequestResponse.huaoService.login(account,password).enqueue(object : Callback<BeanLogin?> {
+            override fun onResponse(call: Call<BeanLogin?>, response: Response<BeanLogin?>) {
+                when (response.body()!!.code) {
+                    200 -> {
+                        RouterUtil().goBottomNavigationActivity(mActivity)
+                        val sp = mActivity.getSharedPreferences("sp", Context.MODE_PRIVATE)
+                        sp.edit().putString("token", response.body()!!.token.toString()).apply()
+                        Toast.makeText(mActivity, "登录成功", Toast.LENGTH_SHORT).show()
+                        Log.e("TAG", "存token${response.body()!!.token}")
+                        mActivity.finish()
+                    }
+                    500 -> {
+                        // Toast.makeText(mActivity, response.body()!!.,Toast.LENGTH_SHORT).show()
+                    }
+                    405 -> {
+                        //Toast.makeText(mActivity,response.body()!!.msg,Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        //Toast.makeText(mActivity,response.body()!!.msg,Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BeanLogin?>, t: Throwable) {
+                Log.e("TAG", "t==$t")
+            }
+        })
+    }
+}
+
 //
 //            override fun onFailure(call: Call<BeanLogin?>, t: Throwable) {
 //                Toast.makeText(activity,t.toString(),Toast.LENGTH_SHORT).show()
@@ -121,4 +127,3 @@ class LoginViewModel : ViewModel() {
 //            }
 //        })
 //    }
-}

@@ -2,6 +2,7 @@ package com.example.officeutils.https
 
 
 import com.example.officeutils.bean.BeanDPFWord
+import com.example.officeutils.bean.BeanLogin
 import com.example.officeutils.bean.BeanRegister
 import com.example.officeutils.bean.RequestRegiseter
 import okhttp3.RequestBody
@@ -16,6 +17,9 @@ interface APIService {
     @POST("/androidServer/register")
     fun register(@Body rr : RequestRegiseter) : Call<BeanRegister>
 
+    @FormUrlEncoded
+    @POST("/androidServer/login")
+    fun login(@Field("username") phone : String ,@Field("password") password : String) :  Call<BeanLogin>
 //    @GET("/api/sao")
 //    fun getSao(@Query("type") type : String) : Call<SaoBean>
 //

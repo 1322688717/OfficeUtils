@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.officeutils.bean.BeanRegister
 import com.example.officeutils.bean.RequestRegiseter
 import com.example.officeutils.https.RequestResponse
+import com.example.officeutils.utils.RouterUtil
 import com.example.officeutils.utils.ToastUtil
 import io.grpc.Context
 import retrofit2.Call
@@ -25,6 +26,7 @@ class RegisterViewModel : ViewModel() {
             override fun onResponse(call: Call<BeanRegister>, response: Response<BeanRegister>) {
              if (response.code() == 200){
                  ToastUtil().ToastShort(mContext,"注册成功")
+                 RouterUtil().goLoginActivity(mContext)
              }else if (response.code() == 500){
                  Log.e("TAG","message==${response.message()}")
              }

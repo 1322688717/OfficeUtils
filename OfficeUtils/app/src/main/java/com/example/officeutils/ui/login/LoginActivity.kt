@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -62,8 +65,13 @@ class LoginActivity : BaseActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            RouterUtil().goBottomNavigationActivity(this)
-            finish()
+            account = binding.edtAccount.text.toString()
+            passWord = binding.edtPassword.text.toString()
+            code = binding.edtVerCode.toString()
+            Log.e("TAG","account==$account")
+            Log.e("TAG","passWord==$passWord")
+            viewModel.login(account,passWord,code,this)
+
         }
 
         binding.getCode.setOnClickListener {
@@ -77,7 +85,21 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun initView() {
+        binding.btnLogin.isEnabled = false
+        binding.edtAccount.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                binding.btnLogin.isEnabled = !s!!.isEmpty()
+
+            }
+        })
     }
 
     class TimerUnit(private val textView: TextView) : Handler() {
