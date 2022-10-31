@@ -32,7 +32,6 @@ class FileConversionActivity : AppCompatActivity() {
     val context = this
 
     var file : String = ""
-     var base64 : String = ""
     lateinit var uri : Uri
 
     //对文件管理器返回值做处理
@@ -44,8 +43,7 @@ class FileConversionActivity : AppCompatActivity() {
         GlobalScope.launch {
             file = getFile(this@FileConversionActivity,uri)
             viewModel.file.postValue(file)
-            base64 = getBase64(file)
-            viewModel.requestBase64.postValue(base64)
+            viewModel.requestBase64.postValue(getBase64(file))
         }
     }
 
@@ -57,8 +55,8 @@ class FileConversionActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(HttpViewModle::class.java)
 
-        viewModel.demoPdfConvert.observe(this){demoPdfConvert ->
-            binding.btnResult.text = demoPdfConvert.getMessage()
+        viewModel.base64andname.observe(this){base64andname ->
+            binding.btnResult.text = base64andname.name
         }
 
         /**
@@ -83,6 +81,7 @@ class FileConversionActivity : AppCompatActivity() {
          */
         binding.createFile.setOnClickListener{
             viewModel.base64andname.observe(this){the->
+                checkPermission()
                 GlobalScope.launch {
                     savaPdf(the.base64,the.name)
                 }
@@ -130,7 +129,7 @@ class FileConversionActivity : AppCompatActivity() {
     suspend fun savaPdf(base64:String,name:String){
         withContext(Dispatchers.IO){
             Log.i(TAG, "savaPdf: $name")
-            FileToBase64.decoderBase64File(base64,name)
+            FileToBase64.saveFileName(base64,name+".pdf")
         }
     }
 
@@ -155,8 +154,7 @@ class FileConversionActivity : AppCompatActivity() {
             //申请权限
             ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE)
         } else {
-            Toast.makeText(this, "已授权成功！", Toast.LENGTH_SHORT).show()
-            //writeSdcard()
+            Log.i(TAG, "checkPermission: 成功授权")
         }
     }
 

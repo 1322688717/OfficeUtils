@@ -83,6 +83,9 @@ public class Java_Windows {
         headers.put("X-Date", datetime);
         headers.put("Authorization", auth);
 
+        if (file == null){
+            return null;
+        }
         FileInputStream fis = new FileInputStream(file);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -160,9 +163,9 @@ public class Java_Windows {
             JSONArray thethe = the.optJSONArray("urlArray");
 
             Log.e("base64,====",thethe.toString());
-            File files = new File(Environment.getExternalStorageDirectory(), "filename.pdf");
-            String sb = thethe.toString().substring(81,thethe.toString().length());
-             fileNameAndBase64 = new FileNameAndBase64(sb,files.toString());
+            String filesName = file.substring(42,file.length()-5);
+            String sb = thethe.toString().substring(81);
+             fileNameAndBase64 = new FileNameAndBase64(sb,filesName);
             Log.i(TAG, "mains: 原生请求成功"+fileNameAndBase64);
 
         } catch (Exception e) {
