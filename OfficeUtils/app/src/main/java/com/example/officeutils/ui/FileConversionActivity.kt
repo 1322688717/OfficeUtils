@@ -1,19 +1,20 @@
 package com.example.officeutils.ui
 
+import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import com.example.officeutils.bean.FileNameAndBase64
-import com.example.officeutils.bean.JsonToFrom
 import com.example.officeutils.databinding.ActivityFileConversionBinding
 import com.example.officeutils.utils.FileToBase64
 import com.example.officeutils.utils.UriToFile
@@ -22,8 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
 
 
 class FileConversionActivity : AppCompatActivity() {
@@ -44,18 +43,9 @@ class FileConversionActivity : AppCompatActivity() {
         Log.i(TAG, "onActivityResult:$uri")
         GlobalScope.launch {
             file = getFile(this@FileConversionActivity,uri)
+            viewModel.file.postValue(file)
             base64 = getBase64(file)
-
-            val LIstSrtings : List<String> = listOf("ImportFile")
-            val ConvertFileDTO = JsonToFrom.TasksDTO.ConvertFileDTO(LIstSrtings,"pdf","convert")
-            val ImportFileDTO = JsonToFrom.TasksDTO.ImportFileDTO("import/url","application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,$base64")
-            val listString : List<String> = listOf("ConvertFile")
-            val ExportResultDTO = JsonToFrom.TasksDTO.ExportResultDTO(listString,"export/url")
-            val TasksDTO = JsonToFrom.TasksDTO(ConvertFileDTO,ImportFileDTO,ExportResultDTO)
-            val JsonToFrom = JsonToFrom("","",TasksDTO)
-            viewModel.postPdfConvert(JsonToFrom)
-            val sn = "长度："+base64.length+"\n" +uri+"\n"+file
-            Log.e("TAG","$sn")
+            viewModel.requestBase64.postValue(base64)
         }
     }
 
@@ -66,6 +56,7 @@ class FileConversionActivity : AppCompatActivity() {
         binding = ActivityFileConversionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(HttpViewModle::class.java)
+
         viewModel.demoPdfConvert.observe(this){demoPdfConvert ->
             binding.btnResult.text = demoPdfConvert.getMessage()
         }
@@ -82,6 +73,7 @@ class FileConversionActivity : AppCompatActivity() {
          */
         binding.btnUpload.setOnClickListener {
             GlobalScope.launch {
+                viewModel.postPdfConvert()
                 viewModel.theDemoPOst(file,context)
             }
         }
@@ -141,5 +133,32 @@ class FileConversionActivity : AppCompatActivity() {
             FileToBase64.decoderBase64File(base64,name)
         }
     }
+
+    private val REQUEST_EXTERNAL_STORAGE = 1
+    private val PERMISSIONS_STORAGE = arrayOf(
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+    )
+
+    private fun checkPermission() {
+//检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            ) {
+                Toast.makeText(this, "请开通相关权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show()
+            }
+            //申请权限
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE)
+        } else {
+            Toast.makeText(this, "已授权成功！", Toast.LENGTH_SHORT).show()
+            //writeSdcard()
+        }
+    }
+
 
 }

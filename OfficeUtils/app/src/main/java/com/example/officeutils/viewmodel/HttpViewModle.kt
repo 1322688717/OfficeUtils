@@ -27,8 +27,14 @@ class HttpViewModle : ViewModel() {
     val pdfConvert = MutableLiveData<String?>()
     //demo的 PDF转换数据
     val demoPdfConvert = MutableLiveData<ResultBean>()
-    // base64+name
+    // 接收的base64+name
     val base64andname = MutableLiveData<FileNameAndBase64>()
+    //文件地址
+    val file = MutableLiveData<String>()
+    //发送的base64
+    val requestBase64 = MutableLiveData<String>()
+    //发送的参数
+    var jsonToFrom = MutableLiveData<JsonToFrom>()
 
 
     /**
@@ -62,29 +68,21 @@ class HttpViewModle : ViewModel() {
      *文件转换  post请求
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    suspend fun postPdfConvert(theBase64: JsonToFrom){
+    suspend fun postPdfConvert(){
         withContext(Dispatchers.IO) {
-            //val theBodyMap = HashMap<String,String>()
-            val Body = "{\"tasks\":{\"JsonRootBean\":{\"input\":[\"ImportFile\"],\"output_format\":\"pdf\",\"operation\":\"convert\"},\"ImportFile\":{\"url\":\""+PdfConvertHelp.he+"theBase64"+"\",\"operation\":\"import/url\"},\"ExportResult\":{\"input\":[\"JsonRootBean\"],\"operation\":\"export/url\"}},\"webHook\":\"\",\"tag\":\"\"}"
-            //val theBody = PdfConvertHelp.urlencode(theBodyMap)
-            val jsons = JSON.parseObject(Body)
-            Log.i(TAG, "原本的请求体: $jsons")
-
-            val theRequestJson = JSONObject.toJSONString(theBase64)
-            Log.i(TAG, "theRequestJson: $theRequestJson")
-
+            pliceParameters()
             OkHttpUtils.builder().url(PdfConvertHelp.url)
                 .addHeader("X-Source", PdfConvertHelp.source)
                 .addHeader("X-Date", PdfConvertHelp.GetGMT())
                 .addHeader("Authorization", PdfConvertHelp.calcAuthorization(
                     PdfConvertHelp.source, PdfConvertHelp.secretId, PdfConvertHelp.secretKey, PdfConvertHelp.GetGMT()))
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addParam("body",theRequestJson)
-                .post(true)
+                .addParam("",jsonToFrom.toString())
+                .post(false)
                 .async(object : OkHttpUtils.ICallBack {
                     override fun onSuccessful(call: Call?, data: Response?) {
                         Log.i(TAG, "onSuccessful: $data")
-                            pdfConvert.postValue(data!!.body.toString())
+                            pdfConvert.postValue(data!!.toString())
 
                     }
 
@@ -96,11 +94,29 @@ class HttpViewModle : ViewModel() {
         }
     }
 
+    /**
+     * 构建请求参数
+     */
+    fun pliceParameters(){
+        val LIstSrtings : List<String> = listOf("ImportFile")
+        val ConvertFileDTO = JsonToFrom.TasksDTO.ConvertFileDTO(LIstSrtings,"pdf","convert")
+        val ImportFileDTO = JsonToFrom.TasksDTO.ImportFileDTO("import/url","application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,$requestBase64")
+        val listString : List<String> = listOf("ConvertFile")
+        val ExportResultDTO = JsonToFrom.TasksDTO.ExportResultDTO(listString,"export/url")
+        val TasksDTO = JsonToFrom.TasksDTO(ConvertFileDTO,ImportFileDTO,ExportResultDTO)
+         jsonToFrom.postValue(JsonToFrom("","",TasksDTO))
+    }
+
+
+    /**
+     * demo的post请求
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun theDemoPOst(file:String,context: Context){
         withContext(Dispatchers.IO){
             base64andname.postValue(Java_Windows.mains(file,context))
         }
     }
+
 
 }
