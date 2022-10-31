@@ -122,14 +122,14 @@ class FileConversionActivity : AppCompatActivity() {
         withContext(Dispatchers.IO){
             BASE_64 = FileToBase64.encodeBase64File(file)
         }
-        Log.i("getBase64", "getBase64: $BASE_64")
+        Log.i("getBase64", "getBase64: 打印前12字符"+BASE_64.substring(12))
         return BASE_64
     }
 
     suspend fun savaPdf(base64:String,name:String){
         withContext(Dispatchers.IO){
             Log.i(TAG, "savaPdf: $name")
-            FileToBase64.saveFileName(base64,name+".pdf")
+            FileToBase64.saveFileName(base64, "$name.pdf")
         }
     }
 

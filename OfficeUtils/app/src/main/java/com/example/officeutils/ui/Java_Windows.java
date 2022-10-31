@@ -152,7 +152,7 @@ public class Java_Windows {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            System.out.println(result);
+            Log.i(TAG, "mains: 打印原生请求的everything"+result);
             JSONObject jsonObject = new JSONObject(result);
             JSONObject now = jsonObject.optJSONObject("data");
             assert now != null;
@@ -162,11 +162,11 @@ public class Java_Windows {
             JSONObject the = (JSONObject) tasks.get(0);
             JSONArray thethe = the.optJSONArray("urlArray");
 
-            Log.e("base64,====",thethe.toString());
+            Log.i(TAG,"打印返回体urlArray的前100字符"+thethe.toString().substring(100));
             String filesName = file.substring(42,file.length()-5);
             String sb = thethe.toString().substring(81);
              fileNameAndBase64 = new FileNameAndBase64(sb,filesName);
-            Log.i(TAG, "mains: 原生请求成功"+fileNameAndBase64);
+            Log.i(TAG, "mains: 原生请求成功");
 
         } catch (Exception e) {
             System.out.println(e);
