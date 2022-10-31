@@ -13,7 +13,7 @@ import com.example.officeutils.bean.Base64ToFile
 import com.example.officeutils.https.OkHttpUtils
 import com.example.officeutils.https.PdfConvertHelp
 import com.example.officeutils.ui.Java_Windows
-import com.example.officeutils.utils.FileToBase64
+import com.example.officeutils.utils.FileToBase64ToFile
 import com.example.officeutils.utils.UriToFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -128,7 +128,7 @@ class HttpViewModle : ViewModel() {
     suspend fun getBase64(file : String){
         var BASE_64 : String
         withContext(Dispatchers.IO){
-            BASE_64 = FileToBase64.encodeBase64File(file)
+            BASE_64 = FileToBase64ToFile.encodeBase64File(file)
         }
         requestBase64.postValue(BASE_64)
     }
