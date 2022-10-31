@@ -2,6 +2,8 @@ package com.example.officeutils.https
 
 
 import com.example.officeutils.bean.BeanDPFWord
+import com.example.officeutils.bean.BeanRegister
+import com.example.officeutils.bean.RequestRegiseter
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -10,6 +12,9 @@ import retrofit2.http.*
 interface APIService {
     @GET("/release/convert")
     fun getPDFToWord(@Query("type") type : String) : Call<BeanDPFWord>
+
+    @POST("/androidServer/register")
+    fun register(@Body rr : RequestRegiseter) : Call<BeanRegister>
 
 //    @GET("/api/sao")
 //    fun getSao(@Query("type") type : String) : Call<SaoBean>

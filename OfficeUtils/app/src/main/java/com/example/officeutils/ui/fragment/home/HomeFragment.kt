@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun onclickInit() {
-        binding.tvPdfToWord.setOnClickListener {
+        binding.imgPdfToWord.setOnClickListener {
             RouterUtil().goFileConversionActivity(requireActivity())
         }
     }

@@ -118,3 +118,9 @@
 * 项目结构
   * 采用MVVM
 * 项目配置
+
+
+
+### 后台管理
+
+* http://1.12.240.180:8083/androidServer/doc.html#/home
