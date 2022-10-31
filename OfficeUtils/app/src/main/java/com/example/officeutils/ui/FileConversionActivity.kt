@@ -1,8 +1,6 @@
 package com.example.officeutils.ui
 
 import android.Manifest
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,7 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.officeutils.databinding.ActivityFileConversionBinding
 import com.example.officeutils.utils.FileToBase64
-import com.example.officeutils.utils.UriToFile
 import com.example.officeutils.viewmodel.HttpViewModle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -53,8 +50,8 @@ class FileConversionActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel = ViewModelProvider(this).get(HttpViewModle::class.java)
 
-        viewModel.base64andname.observe(this){base64andname ->
-            binding.btnResult.text = base64andname.name
+        viewModel.baseToFile.observe(this){ base64andname ->
+            binding.btnResult.text = base64andname.data?.id.toString().substring(6)
         }
 
         /**
@@ -66,12 +63,15 @@ class FileConversionActivity : AppCompatActivity() {
 
         /**
          * 发送请求
+         * 注意最好二选一
          */
         binding.btnUpload.setOnClickListener {
             viewModel.pliceParameters()
             GlobalScope.launch {
-                viewModel.postPdfConvert()
-                //viewModel.theDemoPOst(file,context)
+                //okhttp  请求
+                //viewModel.postPdfConvert()
+                // 原生请求
+                viewModel.file.value?.let { it1 -> viewModel.theDemoPOst(it1,context) }
             }
         }
 
@@ -79,10 +79,13 @@ class FileConversionActivity : AppCompatActivity() {
          * 创建文件
          */
         binding.createFile.setOnClickListener{
-            viewModel.base64andname.observe(this){the->
+            viewModel.baseToFile.observe(this){ the->
                 checkPermission()
                 GlobalScope.launch {
-                    savaPdf(the.base64,the.name)
+                    val mysely = the.data?.tasks?.get(0)?.urlArray.toString()
+                    val sely_2 = mysely.subSequence(IntRange(80,mysely.length-2)).toString()
+                    savaPdf(sely_2
+                        ,the.data?.id.toString().subSequence(3,5).toString())
                 }
             }
 

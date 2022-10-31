@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.alibaba.fastjson.JSON;
+import com.example.officeutils.bean.Base64ToFile;
 import com.example.officeutils.bean.FileNameAndBase64;
 import com.example.officeutils.bean.ResultBean;
 import com.example.officeutils.utils.FileToBase64;
@@ -60,7 +61,7 @@ public class Java_Windows {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static FileNameAndBase64 mains(String file, Context context) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public static Base64ToFile mains(String file, Context context) throws NoSuchAlgorithmException, IOException, InvalidKeyException {
         //云市场分配的密钥Id
         String secretId = "AKID7KgduqScdf0kqc75jqn98p1Si0hkdyp73p7G";
         //云市场分配的密钥Key
@@ -69,6 +70,7 @@ public class Java_Windows {
         String source = "market";
         String result = "";
         FileNameAndBase64 fileNameAndBase64 = null;
+        Base64ToFile base64ToFile = null;
 
         Calendar cd = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
@@ -155,22 +157,9 @@ public class Java_Windows {
             while ((line = in.readLine()) != null) {
                 result += line;
             }
-            Log.i(TAG, "mains: 打印原生请求的everything"+result);
-            JSONObject jsonObject = new JSONObject(result);
-            JSONObject now = jsonObject.optJSONObject("data");
-            assert now != null;
-
-
-            JSONArray tasks = now.optJSONArray("tasks");
-            JSONObject the = (JSONObject) tasks.get(0);
-            JSONArray thethe = the.optJSONArray("urlArray");
-
-            Log.i(TAG,"打印返回体urlArray的前100字符"+thethe.toString().substring(100));
-            String filesName = file.substring(42,file.length()-5);
-            String sb = thethe.toString().substring(81);
-             fileNameAndBase64 = new FileNameAndBase64(sb,filesName);
-            Log.i(TAG, "mains: 原生请求成功");
-
+             base64ToFile = JSON.parseObject(result, Base64ToFile.class);
+            // 得去除前80个字符
+            Log.i(TAG, "mains: 打印某个返回参数"+base64ToFile.getData().getTasks().get(0).getUrlArray().toString().substring(0,82));
         } catch (Exception e) {
             System.out.println(e);
             Log.e(TAG, "mains: 原生请求失败"+e );
@@ -184,7 +173,7 @@ public class Java_Windows {
                 e2.printStackTrace();
             }
         }
-        return fileNameAndBase64;
+        return base64ToFile;
     }
 
 

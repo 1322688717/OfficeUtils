@@ -9,9 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alibaba.fastjson.JSON
-import com.example.officeutils.bean.FileNameAndBase64
-import com.example.officeutils.bean.JsonToFrom
-import com.example.officeutils.bean.ResultBean
+import com.example.officeutils.bean.Base64ToFile
 import com.example.officeutils.https.OkHttpUtils
 import com.example.officeutils.https.PdfConvertHelp
 import com.example.officeutils.ui.Java_Windows
@@ -28,10 +26,8 @@ class HttpViewModle : ViewModel() {
     val theResult = MutableLiveData<String>()
     //pdf转换的数据
     val pdfConvert = MutableLiveData<String?>()
-    //demo的 PDF转换数据
-    val demoPdfConvert = MutableLiveData<ResultBean>()
-    // 接收的base64+name
-    val base64andname = MutableLiveData<FileNameAndBase64>()
+    // 接收的body信息
+    val baseToFile = MutableLiveData<Base64ToFile>()
     //文件地址
     val file = MutableLiveData<String>()
     //发送的base64
@@ -78,13 +74,13 @@ class HttpViewModle : ViewModel() {
                 .addHeader("X-Date", PdfConvertHelp.GetGMT())
                 .addHeader("Authorization", PdfConvertHelp.calcAuthorization(
                     PdfConvertHelp.source, PdfConvertHelp.secretId, PdfConvertHelp.secretKey, PdfConvertHelp.GetGMT()))
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addParam("body",jsonToFrom.value)
                 .post(false)
                 .async(object : OkHttpUtils.ICallBack {
                     override fun onSuccessful(call: Call?, data: Response?) {
                         pdfConvert.postValue(data!!.toString())
                         Log.i(TAG, "onSuccessful: ${data.message.toString()}${data.isSuccessful}${data.code}${data.body}")
+                        baseToFile.postValue(JSON.parseObject(data.body.toString(),Base64ToFile::class.java))
                     }
 
                     override fun onFailure(call: Call?, errorMsg: String?) {
@@ -109,7 +105,7 @@ class HttpViewModle : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun theDemoPOst(file:String,context: Context){
         withContext(Dispatchers.IO){
-            base64andname.postValue(Java_Windows.mains(file,context))
+            baseToFile.postValue(Java_Windows.mains(file,context))
         }
     }
 
@@ -122,6 +118,7 @@ class HttpViewModle : ViewModel() {
             FILE = UriToFile.UriToF(context,uri)
         }
         Log.i(ContentValues.TAG, "getFile:$FILE ")
+        file.postValue(FILE)
         getBase64(FILE)
     }
 
