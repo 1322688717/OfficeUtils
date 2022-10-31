@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 
 
 class FileConversionActivity : AppCompatActivity() {
-
+    val TAG = "FileConversionActivity"
     lateinit var binding: ActivityFileConversionBinding
     lateinit var viewModel: HttpViewModle
     val context = this
@@ -41,9 +41,7 @@ class FileConversionActivity : AppCompatActivity() {
         uri = uri1
         Log.i(TAG, "onActivityResult:$uri")
         GlobalScope.launch {
-            file = getFile(this@FileConversionActivity,uri)
-            viewModel.file.postValue(file)
-            viewModel.requestBase64.postValue(getBase64(file))
+            viewModel.getFile(this@FileConversionActivity,uri)
         }
     }
 
@@ -70,9 +68,10 @@ class FileConversionActivity : AppCompatActivity() {
          * 发送请求
          */
         binding.btnUpload.setOnClickListener {
+            viewModel.pliceParameters()
             GlobalScope.launch {
                 viewModel.postPdfConvert()
-                viewModel.theDemoPOst(file,context)
+                //viewModel.theDemoPOst(file,context)
             }
         }
 
@@ -108,23 +107,7 @@ class FileConversionActivity : AppCompatActivity() {
         startActivityForResult(intent, CREATE_FILE)
     }
 
-    suspend fun  getFile(context: Context, uri : Uri):String{
-        var FILE : String
-        withContext(Dispatchers.IO){
-            FILE = UriToFile.UriToF(context,uri)
-        }
-        Log.i(TAG, "getFile:$FILE ")
-        return FILE
-    }
 
-    suspend fun getBase64(file : String):String{
-        var BASE_64 : String
-        withContext(Dispatchers.IO){
-            BASE_64 = FileToBase64.encodeBase64File(file)
-        }
-        Log.i("getBase64", "getBase64: 打印前12字符"+BASE_64.substring(12))
-        return BASE_64
-    }
 
     suspend fun savaPdf(base64:String,name:String){
         withContext(Dispatchers.IO){

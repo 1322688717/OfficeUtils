@@ -1,19 +1,22 @@
 package com.example.officeutils.viewmodel
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
 import com.example.officeutils.bean.FileNameAndBase64
 import com.example.officeutils.bean.JsonToFrom
 import com.example.officeutils.bean.ResultBean
 import com.example.officeutils.https.OkHttpUtils
 import com.example.officeutils.https.PdfConvertHelp
 import com.example.officeutils.ui.Java_Windows
+import com.example.officeutils.utils.FileToBase64
+import com.example.officeutils.utils.UriToFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -34,7 +37,7 @@ class HttpViewModle : ViewModel() {
     //发送的base64
     val requestBase64 = MutableLiveData<String>()
     //发送的参数
-    var jsonToFrom = MutableLiveData<JsonToFrom>()
+    var jsonToFrom = MutableLiveData<String>()
 
 
     /**
@@ -70,20 +73,18 @@ class HttpViewModle : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.N)
     suspend fun postPdfConvert(){
         withContext(Dispatchers.IO) {
-            pliceParameters()
             OkHttpUtils.builder().url(PdfConvertHelp.url)
                 .addHeader("X-Source", PdfConvertHelp.source)
                 .addHeader("X-Date", PdfConvertHelp.GetGMT())
                 .addHeader("Authorization", PdfConvertHelp.calcAuthorization(
                     PdfConvertHelp.source, PdfConvertHelp.secretId, PdfConvertHelp.secretKey, PdfConvertHelp.GetGMT()))
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addParam("",jsonToFrom.toString())
+                .addParam("body",jsonToFrom.value)
                 .post(false)
                 .async(object : OkHttpUtils.ICallBack {
                     override fun onSuccessful(call: Call?, data: Response?) {
-                        Log.i(TAG, "onSuccessful: $data")
-                            pdfConvert.postValue(data!!.toString())
-
+                        pdfConvert.postValue(data!!.toString())
+                        Log.i(TAG, "onSuccessful: ${data.message.toString()}${data.isSuccessful}${data.code}${data.body}")
                     }
 
                     override fun onFailure(call: Call?, errorMsg: String?) {
@@ -98,13 +99,7 @@ class HttpViewModle : ViewModel() {
      * 构建请求参数
      */
     fun pliceParameters(){
-        val LIstSrtings : List<String> = listOf("ImportFile")
-        val ConvertFileDTO = JsonToFrom.TasksDTO.ConvertFileDTO(LIstSrtings,"pdf","convert")
-        val ImportFileDTO = JsonToFrom.TasksDTO.ImportFileDTO("import/url","application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,$requestBase64")
-        val listString : List<String> = listOf("ConvertFile")
-        val ExportResultDTO = JsonToFrom.TasksDTO.ExportResultDTO(listString,"export/url")
-        val TasksDTO = JsonToFrom.TasksDTO(ConvertFileDTO,ImportFileDTO,ExportResultDTO)
-         jsonToFrom.postValue(JsonToFrom("","",TasksDTO))
+         jsonToFrom.postValue(PdfConvertHelp.LoadingEntityClasses(requestBase64.value))
     }
 
 
@@ -116,6 +111,29 @@ class HttpViewModle : ViewModel() {
         withContext(Dispatchers.IO){
             base64andname.postValue(Java_Windows.mains(file,context))
         }
+    }
+
+    /**
+     * 获取uri
+     */
+    suspend fun  getFile(context: Context, uri : Uri){
+        var FILE : String
+        withContext(Dispatchers.IO){
+            FILE = UriToFile.UriToF(context,uri)
+        }
+        Log.i(ContentValues.TAG, "getFile:$FILE ")
+        getBase64(FILE)
+    }
+
+    /**
+     * 获取base64
+     */
+    suspend fun getBase64(file : String){
+        var BASE_64 : String
+        withContext(Dispatchers.IO){
+            BASE_64 = FileToBase64.encodeBase64File(file)
+        }
+        requestBase64.postValue(BASE_64)
     }
 
 

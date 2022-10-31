@@ -12,6 +12,7 @@ import com.example.officeutils.bean.FileNameAndBase64;
 import com.example.officeutils.bean.ResultBean;
 import com.example.officeutils.utils.FileToBase64;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -147,7 +148,9 @@ public class Java_Windows {
             String line;
 
 
-
+            String s = "{\"tasks\":{\"JsonRootBean\":{\"input\":[\"ImportFile\"],\"output_format\":\"pdf\",\"operation\":\"convert\"},\"ImportFile\":{\"url\":\""+"he+str"+"\",\"operation\":\"import/url\"},\"ExportResult\":{\"input\":[\"JsonRootBean\"],\"operation\":\"export/url\"}},\"webHook\":\"\",\"tag\":\"\"}";
+            String json = StringEscapeUtils.unescapeJson(s);
+            System.out.println(json);
 
             while ((line = in.readLine()) != null) {
                 result += line;

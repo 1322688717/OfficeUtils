@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+/**
+ * uri 转为文件地址
+ */
 public class UriToFile {
      public static String UriToF(Context context, Uri uri) {
         try {

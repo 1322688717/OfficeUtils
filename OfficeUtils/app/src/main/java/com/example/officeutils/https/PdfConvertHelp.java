@@ -1,8 +1,9 @@
 package com.example.officeutils.https;
 
-import android.util.Base64;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.example.officeutils.bean.JsonToFrom;
 import com.example.officeutils.utils.Base64Encoder;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +12,9 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -32,7 +35,9 @@ public class PdfConvertHelp {
     public static final String secretKey = "lq8P1959iVGX9C2zo33kIG5VoO01P5jht7hO2ai";
     public static final String source = "market";
     public static final String url = "https://service-1odt5k7b-1255058406.sh.apigw.tencentcs.com/release/v2/jobs";
-    public static final String he = "data:application/pdf;base64,";
+    public static final String pdf = "data:application/pdf;base64,"; // pdf
+    public static final String docx = "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,"; // 提交docx格式
+
 
     /**
      * 加密函数
@@ -54,8 +59,28 @@ public class PdfConvertHelp {
         byte[] hash = mac.doFinal(signStr.getBytes("UTF-8"));
         String sig = Base64Encoder.encode(hash);
         String auth = "hmac id=\"" + secretId + "\", algorithm=\"hmac-sha1\", headers=\"x-date x-source\", signature=\"" + sig + "\"";
-        Log.i(TAG, "calcAuthorization: "+auth);
+        Log.i(TAG, "Authorization参数: "+auth);
         return auth;
+    }
+
+    /**
+     * 构建请求参数
+     * @param base64
+     * @return
+     */
+    public static String LoadingEntityClasses(String base64){
+        List<String> convertFileDTOlist = new ArrayList<>();
+        convertFileDTOlist.add("ImportFile");
+        List<String> exportResultDTOlist = new ArrayList<>();
+        exportResultDTOlist.add("JsonRootBean");
+
+        JsonToFrom.TasksDTO.JsonRootBean convertFileDTO = new JsonToFrom.TasksDTO.JsonRootBean(convertFileDTOlist,"pdf","convert");
+        JsonToFrom.TasksDTO.ImportFileDTO importFileDTO = new JsonToFrom.TasksDTO.ImportFileDTO(docx+base64,"import/url");
+        JsonToFrom.TasksDTO.ExportResultDTO exportResultDTO = new JsonToFrom.TasksDTO.ExportResultDTO(exportResultDTOlist,"export/url");
+        JsonToFrom.TasksDTO tasksDTO = new JsonToFrom.TasksDTO(convertFileDTO,importFileDTO,exportResultDTO);
+        JsonToFrom jsonToFrom = new JsonToFrom(tasksDTO,"","");
+        Log.i(TAG, "LoadingEntityClasses:打印请求参数 "+ JSON.toJSONString(jsonToFrom));
+        return JSON.toJSONString(jsonToFrom);
     }
 
     /**
