@@ -28,6 +28,12 @@ public class FileToBase64ToFile {
 
     private static String TAG = "FileToBase64ToFile";
 
+    /**
+     * 文件转base64
+     * @param path
+     * @return
+     * @throws Exception
+     */
     public static String encodeBase64File(String path) throws Exception {
         File file = new File(path);
         FileInputStream inputFile = new FileInputStream(file);
@@ -139,6 +145,12 @@ public class FileToBase64ToFile {
     public static void decoderBase64File(String base64Code,String theName) throws Exception {
         String FilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/"+theName+".pdf";
         byte[] buffer =Base64.decode(base64Code, Base64.DEFAULT);
+        File file = new File(FilePath);
+        int i = 1;
+        if (file.exists()) {
+            i++;
+            FilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/"+theName+"("+i+")"+".pdf";
+        }
         FileOutputStream out = new FileOutputStream(FilePath);
         out.write(buffer);
         out.close();
