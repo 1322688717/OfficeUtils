@@ -2,7 +2,6 @@ package com.example.officeutils.ui;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -10,12 +9,6 @@ import androidx.annotation.RequiresApi;
 import com.alibaba.fastjson.JSON;
 import com.example.officeutils.bean.Base64ToFile;
 import com.example.officeutils.bean.FileNameAndBase64;
-import com.example.officeutils.bean.ResultBean;
-import com.example.officeutils.utils.FileToBase64;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
