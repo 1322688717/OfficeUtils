@@ -9,6 +9,9 @@ import androidx.annotation.RequiresApi;
 import com.alibaba.fastjson.JSON;
 import com.example.officeutils.bean.Base64ToFile;
 import com.example.officeutils.bean.FileNameAndBase64;
+import com.example.officeutils.utils.FileToBase64ToFile;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -62,7 +65,6 @@ public class Java_Windows {
 
         String source = "market";
         String result = "";
-        FileNameAndBase64 fileNameAndBase64 = null;
         Base64ToFile base64ToFile = null;
 
         Calendar cd = Calendar.getInstance();
@@ -79,21 +81,14 @@ public class Java_Windows {
         headers.put("X-Date", datetime);
         headers.put("Authorization", auth);
 
-        if (file == null){
-            return null;
-        }
-        FileInputStream fis = new FileInputStream(file);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] buf = new byte[4096];
-        for (int len = 0; (len = fis.read(buf)) != -1; ) {
-            bos.write(buf, 0, len);
+        String str = null;
+        try {
+            str = FileToBase64ToFile.encodeBase64File(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "mains: ",e );
         }
-        bos.flush();
-        bos.close();
-        fis.close();
-        byte[] encode = Base64.getEncoder().encode(bos.toByteArray());
-        String str = new String(encode);
         String he = "application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,";// docx
         // 查询参数
         Map<String, String> queryParams = new HashMap<String, String>();
@@ -141,11 +136,6 @@ public class Java_Windows {
             // 定义 BufferedReader输入流来读取URL的响应
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
-
-
-            String s = "{\"tasks\":{\"JsonRootBean\":{\"input\":[\"ImportFile\"],\"output_format\":\"pdf\",\"operation\":\"convert\"},\"ImportFile\":{\"url\":\""+"he+str"+"\",\"operation\":\"import/url\"},\"ExportResult\":{\"input\":[\"JsonRootBean\"],\"operation\":\"export/url\"}},\"webHook\":\"\",\"tag\":\"\"}";
-            String json = StringEscapeUtils.unescapeJson(s);
-            System.out.println(json);
 
             while ((line = in.readLine()) != null) {
                 result += line;

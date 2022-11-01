@@ -14,12 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.officeutils.databinding.ActivityFileConversionBinding
-import com.example.officeutils.utils.FileToBase64
+import com.example.officeutils.utils.FileToBase64ToFile
 import com.example.officeutils.viewmodel.HttpViewModle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 
 class FileConversionActivity : AppCompatActivity() {
@@ -30,6 +31,8 @@ class FileConversionActivity : AppCompatActivity() {
 
     var file : String = ""
     lateinit var uri : Uri
+    val docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    val pdf = "application/pdf"
 
     //对文件管理器返回值做处理
     @RequiresApi(Build.VERSION_CODES.N)
@@ -55,10 +58,24 @@ class FileConversionActivity : AppCompatActivity() {
         }
 
         /**
+         * 验证方法
+         * 首先修改选择得文件类型
+         * 然后验证，同类之间转换
+         */
+        binding.AuthenticationMethod.setOnClickListener {
+            GlobalScope.launch {
+                //文件转base64在选择文件时就
+                val r = Random()
+                FileToBase64ToFile.decoderBase64File(viewModel.requestBase64.value,r.nextInt(100).toString())
+            }
+        }
+
+        /**
          * 获取文件
+         * 切换入参即可改变选择
          */
         binding.btnTest.setOnClickListener {
-            mGetContent.launch("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            mGetContent.launch(docx)
         }
 
         /**
@@ -79,13 +96,16 @@ class FileConversionActivity : AppCompatActivity() {
          * 创建文件
          */
         binding.createFile.setOnClickListener{
-            viewModel.baseToFile.observe(this){ the->
-                checkPermission()
-                GlobalScope.launch {
-                    val mysely = the.data?.tasks?.get(0)?.urlArray.toString()
-                    val sely_2 = mysely.subSequence(IntRange(80,mysely.length-2)).toString()
-                    savaPdf(sely_2
-                        ,the.data?.id.toString().subSequence(3,5).toString())
+            viewModel.baseToFile.observe(this) { the ->
+                if (checkPermission()) {
+                    GlobalScope.launch {
+                        val mysely = the.data?.tasks?.get(0)?.urlArray.toString()
+                        val sely_2 = mysely.subSequence(IntRange(80, mysely.length - 2)).toString()
+                        //Log.i(TAG, "onCreate: "+sely_2.substring(3)+sely_2.subSequence(IntRange(sely_2.length-6,mysely.length-2)))
+                        savaPdf(
+                            sely_2, the.data?.id.toString().subSequence(3, 5).toString()
+                        )
+                    }
                 }
             }
 
@@ -117,7 +137,7 @@ class FileConversionActivity : AppCompatActivity() {
     suspend fun savaPdf(base64:String,name:String){
         withContext(Dispatchers.IO){
             Log.i(TAG, "savaPdf: $name")
-            FileToBase64.saveFileName(base64, "$name.pdf")
+            FileToBase64ToFile.decoderBase64File(base64, name)
         }
     }
 
@@ -127,8 +147,9 @@ class FileConversionActivity : AppCompatActivity() {
         "android.permission.WRITE_EXTERNAL_STORAGE"
     )
 
-    private fun checkPermission() {
+    private fun checkPermission(): Boolean {
 //检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
+        var the = false
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED
         ) {
@@ -137,13 +158,16 @@ class FileConversionActivity : AppCompatActivity() {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
             ) {
+                the =  false;
                 Toast.makeText(this, "请开通相关权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show()
             }
             //申请权限
             ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE)
         } else {
+            the = true
             Log.i(TAG, "checkPermission: 成功授权")
         }
+        return the
     }
 
 
