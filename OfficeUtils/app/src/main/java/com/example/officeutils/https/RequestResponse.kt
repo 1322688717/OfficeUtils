@@ -11,6 +11,6 @@ object RequestResponse {
 
     val weatherService = RetrofitUtlis().create(APIService::class.java,3)
 
-    val huaoService = RetrofitUtlis().create(APIService::class.java,4)
+    val huaoService = RetrofitUtlis().create(APIService::class.java,4,)
 
 }

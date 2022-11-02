@@ -6,7 +6,10 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.alibaba.fastjson.JSON;
+import com.google.protobuf.StringValue;
+
 import okhttp3.*;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -38,7 +41,9 @@ public class OkHttpUtils {
             synchronized (OkHttpUtils.class) {
                 if (okHttpClient == null) {
                     TrustManager[] trustManagers = buildTrustManagers();
+                    HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
                     okHttpClient = new OkHttpClient.Builder()
+                            .addInterceptor(httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                             .connectTimeout(15, TimeUnit.SECONDS)
                             .writeTimeout(20, TimeUnit.SECONDS)
                             .readTimeout(20, TimeUnit.SECONDS)
@@ -229,6 +234,7 @@ public class OkHttpUtils {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 assert response.body() != null;
+
                 callBack.onSuccessful(call, response);
             }
         });

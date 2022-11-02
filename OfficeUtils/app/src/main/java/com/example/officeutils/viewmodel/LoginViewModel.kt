@@ -4,19 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.officeutils.bean.BeanLogin
 import com.example.officeutils.https.RequestResponse
 import com.example.officeutils.utils.RouterUtil
-import com.google.gson.Gson
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import org.json.JSONObject
+import com.tencent.mmkv.MMKV
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class LoginViewModel : ViewModel() {
 
@@ -38,10 +34,9 @@ class LoginViewModel : ViewModel() {
                 when (response.body()!!.code) {
                     200 -> {
                         RouterUtil().goBottomNavigationActivity(mActivity)
-                        val sp = mActivity.getSharedPreferences("sp", Context.MODE_PRIVATE)
-                        sp.edit().putString("token", response.body()!!.token.toString()).apply()
                         Toast.makeText(mActivity, "登录成功", Toast.LENGTH_SHORT).show()
-                        Log.e("TAG", "存token${response.body()!!.token}")
+                        val kv = MMKV.defaultMMKV()
+                        kv.encode("token", response.body()!!.token.toString())
                         mActivity.finish()
                     }
                     500 -> {

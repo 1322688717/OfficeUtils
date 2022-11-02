@@ -20,6 +20,10 @@ interface APIService {
     @FormUrlEncoded
     @POST("/androidServer/login")
     fun login(@Field("username") phone : String ,@Field("password") password : String) :  Call<BeanLogin>
+
+
+    @POST("/androidServer/sys-user/list")
+    fun userInfo(@Body rr : RequestRegiseter) : Call<BeanRegister>
 //    @GET("/api/sao")
 //    fun getSao(@Query("type") type : String) : Call<SaoBean>
 //

@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.officeutils"
-        minSdk 21
+        minSdk 24
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -85,10 +85,16 @@ dependencies {
     api('com.squareup.retrofit2:retrofit:2.9.0')
     api('com.squareup.retrofit2:converter-gson:2.9.0')
 
+    //banner 轮播图
     implementation 'io.github.youth5201314:banner:2.2.2'
+
     //阿里json
     implementation 'com.alibaba:fastjson:2.0.16.android'
+
     //主要是用于消除json（另外一种格式）里的反斜杠
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.1'
+
+    //腾讯mmkv
+    implementation 'com.tencent:mmkv:1.2.14'
 
 }

@@ -77,7 +77,7 @@ class HttpViewModle : ViewModel() {
                 .addParam("body",jsonToFrom.value)
                 .post(false)
                 .async(object : OkHttpUtils.ICallBack {
-                    override fun onSuccessful(call: Call?, data: Response?) {
+                    override fun onSuccessful(call: Call?, data: Response) {
                         pdfConvert.postValue(data!!.toString())
                         Log.i(TAG, "onSuccessful: ${data.message.toString()}${data.isSuccessful}${data.code}${data.body}")
                         baseToFile.postValue(JSON.parseObject(data.body.toString(),Base64ToFile::class.java))

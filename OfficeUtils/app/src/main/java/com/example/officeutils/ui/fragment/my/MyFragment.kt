@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.officeutils.databinding.FragmentNotificationsBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MyFragment : Fragment() {
@@ -21,7 +23,7 @@ class MyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val myViewModel =
+         viewModel =
             ViewModelProvider(this).get(MyViewModel::class.java)
 
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
@@ -39,6 +41,16 @@ class MyFragment : Fragment() {
     }
 
     private fun initView() {
+        GlobalScope.launch {
+            viewModel.getUserInfo(requireActivity())
+        }
+
+
+        viewModel.userInfo.observe(viewLifecycleOwner){ it->
+            binding.tvNickName.text = it.data.toString()
+
+            binding.tvNickName.text = it?.data?.records?.get(0)?.username.toString()
+        }
 
     }
 

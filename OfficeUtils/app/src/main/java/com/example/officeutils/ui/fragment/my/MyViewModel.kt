@@ -1,78 +1,60 @@
 package com.example.officeutils.ui.fragment.my
 
+import BeanUserInfo
 import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.officeutils.https.RequestResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.alibaba.fastjson2.JSON
+import com.example.officeutils.https.OkHttpUtils
+import com.google.gson.Gson
+import com.google.protobuf.StringValue
+import com.google.protobuf.StringValueOrBuilder
+import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+import okhttp3.Call
+import okhttp3.Response
+
 
 class MyViewModel : ViewModel() {
 
-    var headPortrait = MutableLiveData<String>()
-    var nickname =  MutableLiveData<String>()
-    var IndSignature = MutableLiveData<String>()  //个性签名
-    var avatar = MutableLiveData<String>()  //头像
-    var logoutMsg = MutableLiveData<String>()  //退出登录toast
+    val TAG = "MyViewModel"
+    var userInfo = MutableLiveData<BeanUserInfo>()
 
     init {
-        nickname.value = ""
-        IndSignature.value = "这个人很懒，什么都没留下..."
-    }
-    fun setHeadPortrait(mcontext : FragmentActivity) {
+
 
     }
-//
-//    fun getNickname(activity : Activity) {
-//        val sharedPreferences: SharedPreferences = activity.getSharedPreferences("sp", Context.MODE_PRIVATE)
-//        val token = sharedPreferences.getString("token", "")
-//        RequestResponse.huaoService.getUserInfo(token!!).enqueue(object : Callback<Userinfo> {
-//            override fun onResponse(call: Call<Userinfo>, response: Response<Userinfo>) {
-//                nickname.value =  response.body()!!.data.nickName
-//            }
-//
-//            override fun onFailure(call: Call<Userinfo>, t: Throwable) {
-//                Toast.makeText(activity,t.toString(), Toast.LENGTH_LONG).show()
-//            }
-//        })
-//    }
-//
-//    /**
-//     * 获取用户头像
-//     */
-//    fun getAvatar(activity : Activity){
-//        val sharedPreferences: SharedPreferences = activity.getSharedPreferences("sp", Context.MODE_PRIVATE)
-//        val token = sharedPreferences.getString("token", "")
-//        RequestResponse.huaoService.getUserInfo(token!!).enqueue(object : Callback<Userinfo> {
-//            override fun onResponse(call: Call<Userinfo>, response: Response<Userinfo>) {
-//                avatar.value =  response.body()!!.data.avatar
-//            }
-//
-//            override fun onFailure(call: Call<Userinfo>, t: Throwable) {
-//                Toast.makeText(activity,t.toString(), Toast.LENGTH_LONG).show()
-//            }
-//        })
-//    }
-//
-//    /**
-//     * 退出登录
-//     */
-//    fun logout(activity : Activity){
-//        RequestResponse.huaoService.logout().enqueue(object : Callback<BeanLogout> {
-//            override fun onResponse(call: Call<BeanLogout>, response: Response<BeanLogout>) {
-//                logoutMsg.value = response.body()!!.msg
-//            }
-//
-//            override fun onFailure(call: Call<BeanLogout>, t: Throwable) {
-//                Toast.makeText(activity,t.toString(), Toast.LENGTH_LONG).show()
-//            }
-//
-//        })
-//    }
+
+    /**
+     * 获取用户信息
+     */
+    suspend fun getUserInfo(activity : Activity) {
+        withContext(Dispatchers.IO){
+
+
+        val kv = MMKV.defaultMMKV()
+        val token = kv.decodeString("token")
+
+        OkHttpUtils.builder()
+            .url("http://1.12.240.180:8083/androidServer/sys-user/list")
+            .addHeader("token", token)
+            .addParam("phone", "13500000000")
+            .post(true)
+            .async(object : OkHttpUtils.ICallBack {
+                override fun onSuccessful(call: Call?, data: Response){
+                    //Log.i(TAG, "onSuccessful: "+"data.message"+"/////"+ data.body!!.string())
+                    //userInfo.postValue(gson.fromJson(data.body.toString(),BeanUserInfo::class.java))
+                   userInfo.postValue(JSON.parseObject(data?.body?.string(), BeanUserInfo::class.java))
+                }
+
+                override fun onFailure(call: Call?, errorMsg: String?) {
+                    Log.e("TAG", "errorMsg==$errorMsg")
+                }
+
+            })
+        }
+    }
 }
