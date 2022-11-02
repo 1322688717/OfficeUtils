@@ -1,15 +1,19 @@
 package com.example.officeutils.ui
 
+
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.officeutils.R
-import com.example.officeutils.base.BaseActivity
 import com.example.officeutils.databinding.ActivityBottomNavigationBinding
 import com.example.officeutils.utils.StatusBarUtil
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class BottomNavigationActivity : AppCompatActivity() {
 
@@ -35,6 +39,15 @@ class BottomNavigationActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         StatusBarUtil.initStatusBarNight(this)
+
+        //获取底部导航图标颜色，根据图标颜色设置文字颜色
+        //获取底部导航图标颜色，根据图标颜色设置文字颜色
+        val resource: Resources = resources
+        @SuppressLint("ResourceType") val csl: ColorStateList =
+            resource.getColorStateList(com.example.officeutils.R.drawable.navigation_bottom_btn_selected_font_color)
+
+        binding.navView.setItemTextColor(csl)
+
 
     }
 }

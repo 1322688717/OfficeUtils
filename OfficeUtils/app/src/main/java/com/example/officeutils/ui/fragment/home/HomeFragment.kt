@@ -7,16 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.example.officeutils.R
 import com.example.officeutils.adapter.AdapterBanner
-import com.example.officeutils.bean.BeanLogin
 import com.example.officeutils.databinding.FragmentHomeBinding
 import com.example.officeutils.utils.RouterUtil
-import com.youth.banner.adapter.BannerImageAdapter
-import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 import java.util.ArrayList
 
