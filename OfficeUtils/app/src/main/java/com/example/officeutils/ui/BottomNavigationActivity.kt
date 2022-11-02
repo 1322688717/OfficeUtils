@@ -9,8 +9,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.officeutils.R
 import com.example.officeutils.base.BaseActivity
 import com.example.officeutils.databinding.ActivityBottomNavigationBinding
+import com.example.officeutils.utils.StatusBarUtil
 
-class BottomNavigationActivity : BaseActivity() {
+class BottomNavigationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBottomNavigationBinding
 
@@ -32,5 +33,8 @@ class BottomNavigationActivity : BaseActivity() {
         )
         //setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        StatusBarUtil.initStatusBarNight(this)
+
     }
 }

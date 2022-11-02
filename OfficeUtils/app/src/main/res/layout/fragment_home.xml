@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_100"
-        android:background="@color/purple_200">
+        android:background="@color/color_theme">
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,7 +32,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_100"
         android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_10"
+        app:banner_indicator_radius="20dp"
+        app:banner_indicator_selected_color="#95F2EC"
         />
 
 

@@ -1,6 +1,7 @@
 import com.google.gson.annotations.SerializedName
 
 class BeanUserInfo {
+
     @SerializedName("msg")
     var msg: String? = null
 

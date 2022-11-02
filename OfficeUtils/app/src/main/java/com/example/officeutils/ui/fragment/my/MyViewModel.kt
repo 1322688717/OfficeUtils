@@ -46,7 +46,8 @@ class MyViewModel : ViewModel() {
             .async(object : OkHttpUtils.ICallBack {
                 override fun onSuccessful(call: Call?, data: Response){
                     //Log.i(TAG, "onSuccessful: "+"data.message"+"/////"+ data.body!!.string())
-                    //userInfo.postValue(gson.fromJson(data.body.toString(),BeanUserInfo::class.java))
+
+                   // userInfo.postValue(Gson().fromJson(data.body.toString(),BeanUserInfo::class.java))
                    userInfo.postValue(JSON.parseObject(data?.body?.string(), BeanUserInfo::class.java))
                 }
 

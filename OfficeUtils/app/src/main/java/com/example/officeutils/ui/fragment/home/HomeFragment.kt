@@ -10,14 +10,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.example.officeutils.R
+import com.example.officeutils.adapter.AdapterBanner
+import com.example.officeutils.bean.BeanLogin
 import com.example.officeutils.databinding.FragmentHomeBinding
 import com.example.officeutils.utils.RouterUtil
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
-import java.io.UnsupportedEncodingException
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
+import java.util.ArrayList
 
 
 class HomeFragment : Fragment() {
@@ -27,6 +28,9 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+     var listBanner = ArrayList<Int>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,22 +62,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun initBanner() {
-//        binding.banner.setAdapter(object : BannerImageAdapter<DataBean?>(DataBean.getTestData3()) {
-//            override fun onBindView(
-//                holder: BannerImageHolder,
-//                data: DataBean,
-//                position: Int,
-//                size: Int
-//            ) {
-//                //图片加载自己实现
-//                Glide.with(holder.itemView)
-//                    .load(data.imageUrl)
-//                    .apply(RequestOptions.bitmapTransform(RoundedCorners(30)))
-//                    .into(holder.imageView)
-//            }
-//        })
-//            .addBannerLifecycleObserver(this) //添加生命周期观察者
-//            .setIndicator(CircleIndicator(this))
+        listBanner.add(R.drawable.banner1)
+        listBanner.add(R.drawable.banner2)
+        listBanner.add(R.drawable.banner3)
+        binding.banner.addBannerLifecycleObserver(this)//添加生命周期观察者
+            .setAdapter( AdapterBanner(listBanner))
+            .setIndicator( CircleIndicator(requireActivity()));
     }
 
     override fun onDestroyView() {

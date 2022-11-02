@@ -32,6 +32,7 @@ class RetrofitUtlis {
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true).build()
+
         return client
     }
 

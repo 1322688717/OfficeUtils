@@ -1,12 +1,10 @@
 package com.example.officeutils.utils
 
-import android.R
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.view.WindowManager
-import com.gyf.immersionbar.BarHide
+import com.example.officeutils.R
 import com.gyf.immersionbar.ImmersionBar
-import com.gyf.immersionbar.OnBarListener
-import com.gyf.immersionbar.OnKeyboardListener
+
 
 
 object StatusBarUtil {
@@ -22,8 +20,10 @@ object StatusBarUtil {
 
     }
 
+    @SuppressLint("ResourceType")
     fun initStatusBarNight(activity: Activity){
         ImmersionBar.with(activity)
+            .barColor(R.color.color_theme) //同时自定义状态栏和导航栏颜色，不写默认状态栏为透明色，导航栏为黑色
             .init()
     }
 
