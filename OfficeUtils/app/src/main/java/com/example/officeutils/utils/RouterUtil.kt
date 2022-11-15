@@ -3,6 +3,7 @@ package com.example.officeutils.utils
 import android.content.Context
 import android.content.Intent
 import com.example.officeutils.ui.BottomNavigationActivity
+import com.example.officeutils.ui.FileActivity
 import com.example.officeutils.ui.FileConversionActivity
 import com.example.officeutils.ui.MainActivity
 import com.example.officeutils.ui.login.LoginActivity
@@ -53,6 +54,11 @@ class  RouterUtil {
 
     fun goFileConversionActivity(mContext: Context){
         val intent  = Intent(mContext, FileConversionActivity::class.java)
+        mContext.startActivity(intent)
+    }
+
+    fun goFileActivity(mContext: Context){
+        val intent  = Intent(mContext, FileActivity::class.java)
         mContext.startActivity(intent)
     }
 //

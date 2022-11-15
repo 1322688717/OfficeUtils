@@ -53,6 +53,10 @@ class HomeFragment : Fragment() {
         binding.imgPdfToWord.setOnClickListener {
             RouterUtil().goFileConversionActivity(requireActivity())
         }
+
+        binding.imgWordToPdf.setOnClickListener {
+            RouterUtil().goFileActivity(requireActivity())
+        }
     }
 
     private fun initBanner() {

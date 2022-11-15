@@ -19,7 +19,7 @@ interface APIService {
 
     @FormUrlEncoded
     @POST("/androidServer/login")
-    fun login(@Field("username") phone : String ,@Field("password") password : String) :  Call<BeanLogin>
+    fun login(@Field("phone") phone : String ,@Field("password") password : String) :  Call<BeanLogin>
 
 
     @POST("/androidServer/sys-user/list")
