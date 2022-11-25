@@ -39,56 +39,56 @@ class FileActivity : BaseActivity() {
     }
 
     private fun initOnclick() {
-        TODO("Not yet implemented")
+
     }
 
     /**
      * 得到图片文件夹集合
      */
-    fun getImageFolders(): List<ImgFolderBean>? {
-        val folders: MutableList<ImgFolderBean> = ArrayList<ImgFolderBean>()
-        // 扫描图片
-        var c: Cursor? = null
-        try {
-            c =  this.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null,
-                MediaStore.Images.Media.MIME_TYPE + "= ? or " + MediaStore.Images.Media.MIME_TYPE + "= ?",
-                arrayOf("image/jpeg", "image/png"),
-                MediaStore.Images.Media.DATE_MODIFIED
-            )
-            val mDirs: MutableList<String> = ArrayList() //用于保存已经添加过的文件夹目录
-            while (c.moveToNext()) {
-                val path = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA)) // 路径
-                val parentFile: File = File(path).getParentFile() ?: continue
-                val dir: String = parentFile.getAbsolutePath()
-                if (mDirs.contains(dir)) //如果已经添加过
-                    continue
-                mDirs.add(dir) //添加到保存目录的集合中
-                val folderBean = ImgFolderBean()
-                folderBean.setDir(dir)
-                folderBean.setFistImgPath(path)
-                if (parentFile.list() == null) continue
-                val count: Int = parentFile.list(object : FilenameFilter() {
-                    fun accept(dir: File?, filename: String): Boolean {
-                        return if (filename.endsWith(".jpeg") || filename.endsWith(".jpg") || filename.endsWith(
-                                ".png"
-                            )
-                        ) {
-                            true
-                        } else false
-                    }
-                }).length
-                folderBean.setCount(count)
-                folders.add(folderBean)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            c?.close()
-        }
-        return folders
-    }
+//    fun getImageFolders(): List<ImgFolderBean>? {
+//        val folders: MutableList<ImgFolderBean> = ArrayList<ImgFolderBean>()
+//        // 扫描图片
+//        var c: Cursor? = null
+//        try {
+//            c =  this.getContentResolver().query(
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                null,
+//                MediaStore.Images.Media.MIME_TYPE + "= ? or " + MediaStore.Images.Media.MIME_TYPE + "= ?",
+//                arrayOf("image/jpeg", "image/png"),
+//                MediaStore.Images.Media.DATE_MODIFIED
+//            )
+//            val mDirs: MutableList<String> = ArrayList() //用于保存已经添加过的文件夹目录
+//            while (c.moveToNext()) {
+//                val path = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA)) // 路径
+//                val parentFile: File = File(path).getParentFile() ?: continue
+//                val dir: String = parentFile.getAbsolutePath()
+//                if (mDirs.contains(dir)) //如果已经添加过
+//                    continue
+//                mDirs.add(dir) //添加到保存目录的集合中
+//                val folderBean = ImgFolderBean()
+//                folderBean.setDir(dir)
+//                folderBean.setFistImgPath(path)
+//                if (parentFile.list() == null) continue
+//                val count: Int = parentFile.list(object : FilenameFilter() {
+//                    fun accept(dir: File?, filename: String): Boolean {
+//                        return if (filename.endsWith(".jpeg") || filename.endsWith(".jpg") || filename.endsWith(
+//                                ".png"
+//                            )
+//                        ) {
+//                            true
+//                        } else false
+//                    }
+//                }).length
+//                folderBean.setCount(count)
+//                folders.add(folderBean)
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        } finally {
+//            c?.close()
+//        }
+//        return folders
+//    }
 
 
 }
